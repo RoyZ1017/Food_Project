@@ -1,0 +1,8 @@
+Collection of personal notes taken on ReactNative throughout the assignment
+
+React Native is a library built with the same API as React
+- Uses same declarative UI Paradigm but renders directly to native components
+- Run on multiple native platforms - Android/iOS
+
+Expo makes development with React Native even easier
+
