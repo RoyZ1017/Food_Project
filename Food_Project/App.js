@@ -1,24 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native' 
+import {createStackNavigator} from '@react-navigation/stack';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+const HomeScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <Text style = {styles.title}>Welcome to GyattMarket</Text> 
+      <Text style = {styles.title}>Welcome to Food Project</Text> 
       <Image
         source = {{uri:'https://png.pngtree.com/png-vector/20230906/ourmid/pngtree-paper-bag-vector-png-image_10015259.png'}}
         style = {{width:125, height:125}}
       />
-      {/*
-      <ScrollView>
-      <View style={{ width: 300, height: 300, backgroundColor: 'red' }} /> 
-      <View style={{ width: 300, height: 300, backgroundColor: 'green' }} />
-      <View style={{ width: 300, height: 300, backgroundColor: 'blue' }} />
-      </ScrollView>
-      */}
       <Text style = {styles.subtitle}>Login as:</Text>
       <Button
         title = 'Restaurant/Store'
+        onPress={() => navigation.navigate('Login')}
       />
       <View style = {styles.footer}>
         <Text style = {styles.subtitle}>This app was made by{'\n'}Praneeth Suryadevara and Roy Zhang!</Text>
@@ -26,6 +24,24 @@ export default function App() {
       <StatusBar style="auto"/>
     </View>
   );
+}
+
+const LoginScreen = ({navigation}) => {
+  return(
+    <Text>Hello</Text>
+  )
+}
+
+
+export default function App() {  
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Home'>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
 }
 
 const styles = StyleSheet.create({
