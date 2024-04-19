@@ -2,36 +2,30 @@ import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native' 
 import {createStackNavigator} from '@react-navigation/stack';
+import LoginScreen from './Login.js'
 
 const Stack = createStackNavigator();
 
 const HomeScreen = ({navigation}) => {
   return (
-    <View style={styles.container}>
-      <Text style = {styles.title}>Welcome to Food Project</Text> 
+    <View style={HomeStyles.container}>
+      <Text style = {HomeStyles.title}>Welcome to Food Project</Text> 
       <Image
         source = {{uri:'https://png.pngtree.com/png-vector/20230906/ourmid/pngtree-paper-bag-vector-png-image_10015259.png'}}
         style = {{width:125, height:125}}
       />
-      <Text style = {styles.subtitle}>Login as:</Text>
+      <Text style = {HomeStyles.subtitle}>Login as:</Text>
       <Button
         title = 'Restaurant/Store'
         onPress={() => navigation.navigate('Login')}
       />
-      <View style = {styles.footer}>
-        <Text style = {styles.subtitle}>This app was made by{'\n'}Praneeth Suryadevara and Roy Zhang!</Text>
+      <View style = {HomeStyles.footer}>
+        <Text style = {HomeStyles.subtitle}>This app was made by{'\n'}Praneeth Suryadevara and Roy Zhang!</Text>
       </View>
       <StatusBar style="auto"/>
     </View>
   );
 }
-
-const LoginScreen = ({navigation}) => {
-  return(
-    <Text>Hello</Text>
-  )
-}
-
 
 export default function App() {  
   return (
@@ -44,7 +38,7 @@ export default function App() {
   )
 }
 
-const styles = StyleSheet.create({
+const HomeStyles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffefd6',
@@ -64,6 +58,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 40,
     marginBottom: 25,
-    textAlign: 'center'
+    textAlign: 'center',
   },
 });
