@@ -1,6 +1,9 @@
+import React, { useState } from 'react';
 import { Button, StyleSheet, Text, View, Image, ScrollView, TextInput } from 'react-native';
 
 const LoginScreen = ({navigation}) => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     return(
         <View style={LoginStyles.container}>
             <Image
@@ -8,15 +11,31 @@ const LoginScreen = ({navigation}) => {
                 style = {LoginStyles.image}
             />
             <TextInput
-                placeholder="Username"
-                style = {LoginStyles.Textinput}
+                placeholder="Usernane"
+                style = {LoginStyles.textInput}
+                value = {username}
+                onChangeText={setUsername}
             />
             <TextInput
                 placeholder="Password"
+                style = {LoginStyles.textInput}
+                secureTextEntry={true}
+                value = {password}
+                onChangeText={setPassword}
             />
-            <Button
-                title = 'Login'
-                onPress={() => navigation.navigate('Home')}            />
+            <View style={LoginStyles.buttonContainer}>
+                <Button
+                    title = 'Login'
+                    onPress={() => navigation.navigate('Home')}
+                    disabled={!username || !password}
+                />
+                    
+            </View>
+            <View style={LoginStyles.buttonContainer}>
+                <Button
+                    title = 'Create Account'
+                    onPress={() => navigation.navigate('CreateAccount')}/>
+            </View>
         </View>
     )
   }
@@ -24,18 +43,22 @@ const LoginScreen = ({navigation}) => {
 const LoginStyles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffefd6',
         alignItems: 'center',
+        paddingHorizontal: 20,
     },
     image: {
         width: 250, 
         height: 250,
-        position: 'relative',
         top: "10%",
-        marginBottom: 50,
+        marginBottom: "5%",
     },
-    Textinput: {
-        marginTop: 10,
+    textInput: {
+        marginBottom: 10,
+    },
+
+    buttonContainer: {
+        margin: 5,
+        width: "10%"
     }
 
 });
