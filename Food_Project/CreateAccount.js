@@ -11,10 +11,16 @@ const CreateAccountScreen = ({navigation}) => {
     const auth = firebaseAuth
     const signUp = async () => {
         try {
+            if (! validateTime()){
+                console.log("Invalid Time")
+                return False
+            } 
             const response = await createUserWithEmailAndPassword(auth, email, password)
             Alert.alert('Success', 'Sign in Success')
             console.log("Sign In Successful")
             navigation.navigate('Home')
+
+
           } catch (error) {
             Alert.alert('Error', error.message)
             console.log(error.message)
@@ -22,6 +28,7 @@ const CreateAccountScreen = ({navigation}) => {
 
           }
     }
+
     const [openingTimeHour, setOpeningTimeHour] = useState('');
     const [openingTimeMinute, setOpeningTimeMinute] = useState('');
     const [closingTimeHour, setClosingTimeHour] = useState('');
@@ -35,11 +42,12 @@ const CreateAccountScreen = ({navigation}) => {
         if (parseInt(openingTimeHour) > parseInt(closingTimeHour) || 
             (parseInt(openingTimeHour) == parseInt(closingTimeHour)) && (parseInt(openingTimeMinute) >= parseInt(closingTimeMinute))) {
             alert('Opening time must be before closing time.');
-            return; // Exit if opening time is after closing time
+
+            return false; // Exit if opening time is after closing time
         }
 
         // If works navigate to next page
-        navigation.navigate('Home');
+        return true
     };
     return(
         <View style={CreateAccountStyles.container}>
@@ -107,7 +115,7 @@ const CreateAccountScreen = ({navigation}) => {
                 <Button
                     title = 'Create Account'
                     onPress={signUp}
-                    disabled={!email || !password || !name || !location || !openingTime || !closingTime}
+                    disabled={!email || !password || !name || !location || !openingTimeHour || !openingTimeMinute || !closingTimeHour || !closingTimeMinute}
                 />
             </View>
         </View>
