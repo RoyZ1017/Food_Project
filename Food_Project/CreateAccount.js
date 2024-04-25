@@ -3,6 +3,7 @@ import { Button, StyleSheet, Text, View, TextInput, Alert, Picker} from 'react-n
 import {firebaseAuth} from './Firebase.js';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 
+
 const CreateAccountScreen = ({navigation}) => {
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
@@ -49,11 +50,13 @@ const CreateAccountScreen = ({navigation}) => {
         // If works navigate to next page
         return true
     };
+  
     return(
         <View style={CreateAccountStyles.container}>
-            <Text style = {CreateAccountStyles.title}>Account Setup</Text> 
+            <Text style={CreateAccountStyles.title}>Account Setup</Text> 
             <TextInput
                 placeholder="Restaurant Name"
+
                 style = {CreateAccountStyles.textInput}
                 value = {name}
                 onChangeText={(text) => setName(text)}
@@ -106,7 +109,7 @@ const CreateAccountScreen = ({navigation}) => {
             />
             <TextInput
                 placeholder="Password"
-                style = {CreateAccountStyles.textInput}
+                style={CreateAccountStyles.textInput}
                 secureTextEntry={true}
                 value = {password}
                 onChangeText={(text) => setPassword(text)}
