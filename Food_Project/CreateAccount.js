@@ -19,7 +19,7 @@ const CreateAccountScreen = ({navigation}) => {
             const response = await createUserWithEmailAndPassword(auth, email, password)
             Alert.alert('Success', 'Sign in Success')
             console.log("Sign In Successful")
-            navigation.navigate('Home')
+            navigation.navigate('AddListing')
 
 
           } catch (error) {

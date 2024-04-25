@@ -16,7 +16,7 @@ const AddListingScreen = ({navigation}) => {
 
     // Ensure only numbers are inputted in numeric text boxes
     const handleNumericInputChange = (value, setter) => {
-        const numericValue = value.replace(/[^0-9]/g, '');
+        const numericValue = value.replace(/[^0-9.]/g, '');
         setter(numericValue);
     };
 
@@ -53,14 +53,14 @@ const AddListingScreen = ({navigation}) => {
                 onChangeText={setDescription}
             />
             <TextInput
-                placeholder="Original Price (in cents)"
+                placeholder="Original Price"
                 style={[ListingStyles.textInput, ListingStyles.numericInput]}
                 keyboardType="numeric"
                 value={originalPrice}
                 onChangeText={(value) => handleNumericInputChange(value, setOriginalPrice)}
             />
             <TextInput
-                placeholder="Discounted Price (in cents)"
+                placeholder="Discounted Price"
                 style={[ListingStyles.textInput, ListingStyles.numericInput]}
                 keyboardType="numeric"
                 value={discountedPrice}
@@ -86,8 +86,8 @@ const AddListingScreen = ({navigation}) => {
                         <Text style={ListingStyles.listingTitle}>Listing {index + 1}</Text>
                         <Text>Food Name: {listing.foodName}</Text>
                         <Text>Description: {listing.description}</Text>
-                        <Text>Original Price: ${Math.floor(listing.originalPrice / 100)}.{(listing.originalPrice % 100).toString().padStart(2, '0')}</Text>
-                        <Text>Discounted Price: ${listing.discountedPrice/100}.{(listing.discountedPrice%100).toString().padStart(2, '0')}</Text>
+                        <Text>Original Price: ${parseFloat(listing.originalPrice).toFixed(2)}</Text>
+                        <Text>Discounted Price: ${parseFloat(listing.discountedPrice).toFixed(2)}</Text>
                         <Text>Quantity Available: {listing.quantityAvailable}</Text>
                     </View>
                 ))}
