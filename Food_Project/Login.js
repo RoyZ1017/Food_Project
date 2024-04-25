@@ -1,9 +1,24 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View, Image, ScrollView, TextInput } from 'react-native';
+import { Button, StyleSheet, Text, View, Image, ScrollView, TextInput, Alert} from 'react-native';
+import { firebaseAuth } from './Firebase';
+import {signInWithEmailAndPassword} from 'firebase/auth';
+
 
 const LoginScreen = ({navigation}) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const auth = firebaseAuth
+    const signIn = async () => {
+        try {
+            const response = await signInWithEmailAndPassword(auth, email, password)
+            Alert.alert('Success', 'Sign in Success')
+            console.log("Sign In Successful")
+            navigation.navigate('Home')
+          } catch (error) {
+            Alert.alert('Error', error.message)
+            console.log("Sign In Failed")
+          }
+    }
     return(
         <View style={LoginStyles.container}>
             <Image
@@ -11,23 +26,23 @@ const LoginScreen = ({navigation}) => {
                 style = {LoginStyles.image}
             />
             <TextInput
-                placeholder="Usernane"
+                placeholder="Email"
                 style = {LoginStyles.textInput}
-                value = {username}
-                onChangeText={setUsername}
+                value = {email}
+                onChangeText={(text) => setEmail(text)}
             />
             <TextInput
                 placeholder="Password"
                 style = {LoginStyles.textInput}
                 secureTextEntry={true}
                 value = {password}
-                onChangeText={setPassword}
+                onChangeText={(text) => setPassword(text)}
             />
             <View style={LoginStyles.buttonContainer}>
                 <Button
                     title = 'Login'
-                    onPress={() => navigation.navigate('Home')}
-                    disabled={!username || !password}
+                    onPress={signIn}
+                    disabled={!email || !password}
                 />
                     
             </View>

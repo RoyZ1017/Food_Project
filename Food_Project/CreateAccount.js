@@ -1,11 +1,34 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View, ScrollView, TextInput, Picker } from 'react-native';
+import { Button, StyleSheet, Text, View, TextInput, Alert, Picker} from 'react-native';
+import {firebaseAuth} from './Firebase.js';
+import {createUserWithEmailAndPassword} from 'firebase/auth';
+
 
 const CreateAccountScreen = ({navigation}) => {
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const auth = firebaseAuth
+    const signUp = async () => {
+        try {
+            if (! validateTime()){
+                console.log("Invalid Time")
+                return False
+            } 
+            const response = await createUserWithEmailAndPassword(auth, email, password)
+            Alert.alert('Success', 'Sign in Success')
+            console.log("Sign In Successful")
+            navigation.navigate('Home')
+
+
+          } catch (error) {
+            Alert.alert('Error', error.message)
+            console.log(error.message)
+            console.log(email, password)
+
+          }
+    }
 
     const [openingTimeHour, setOpeningTimeHour] = useState('');
     const [openingTimeMinute, setOpeningTimeMinute] = useState('');
@@ -20,27 +43,29 @@ const CreateAccountScreen = ({navigation}) => {
         if (parseInt(openingTimeHour) > parseInt(closingTimeHour) || 
             (parseInt(openingTimeHour) == parseInt(closingTimeHour)) && (parseInt(openingTimeMinute) >= parseInt(closingTimeMinute))) {
             alert('Opening time must be before closing time.');
-            return; // Exit if opening time is after closing time
+
+            return false; // Exit if opening time is after closing time
         }
 
         // If works navigate to next page
-        navigation.navigate('Home');
+        return true
     };
-
+  
     return(
         <View style={CreateAccountStyles.container}>
             <Text style={CreateAccountStyles.title}>Account Setup</Text> 
             <TextInput
                 placeholder="Restaurant Name"
-                style={CreateAccountStyles.textInput}
-                value={name}
-                onChangeText={setName}
+
+                style = {CreateAccountStyles.textInput}
+                value = {name}
+                onChangeText={(text) => setName(text)}
             />
             <TextInput
                 placeholder="Location"
-                style={CreateAccountStyles.textInput}
-                value={location}
-                onChangeText={setLocation}
+                style = {CreateAccountStyles.textInput}
+                value = {location}
+                onChangeText={(text) => setLocation(text)}
             />
             <View style={CreateAccountStyles.timePickerContainer}>
                 <Text>Opening Time:</Text>
@@ -76,26 +101,24 @@ const CreateAccountScreen = ({navigation}) => {
                     ))}
                 </Picker>
             </View>
-
-
             <TextInput
-                placeholder="Username"
-                style={CreateAccountStyles.textInput}
-                value={username}
-                onChangeText={setUsername}
+                placeholder="Email"
+                style = {CreateAccountStyles.textInput}
+                value = {email}
+                onChangeText={(text) => setEmail(text)}
             />
             <TextInput
                 placeholder="Password"
                 style={CreateAccountStyles.textInput}
                 secureTextEntry={true}
-                value={password}
-                onChangeText={setPassword}
+                value = {password}
+                onChangeText={(text) => setPassword(text)}
             />
             <View style={CreateAccountStyles.buttonContainer}>
                 <Button
-                    title='Create Account'
-                    onPress={validateTime}
-                    disabled={!username || !password || !name || !location || !openingTimeHour || !openingTimeMinute || !closingTimeHour || !closingTimeMinute}
+                    title = 'Create Account'
+                    onPress={signUp}
+                    disabled={!email || !password || !name || !location || !openingTimeHour || !openingTimeMinute || !closingTimeHour || !closingTimeMinute}
                 />
             </View>
         </View>
@@ -137,4 +160,5 @@ const CreateAccountStyles = StyleSheet.create({
     },
 });
 
-export default CreateAccountScreen;
+
+export default CreateAccountScreen
