@@ -4,7 +4,7 @@ import { firebaseAuth } from './Firebase';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 
 
-const LoginScreen = ({navigation}) => {
+const LoginUserScreen = ({navigation}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const auth = firebaseAuth
@@ -13,7 +13,7 @@ const LoginScreen = ({navigation}) => {
             const response = await signInWithEmailAndPassword(auth, email, password)
             Alert.alert('Success', 'Sign in Success')
             console.log("Sign In Successful")
-            navigation.navigate('AddListing')
+            navigation.navigate('ShowListings')
           } catch (error) {
             Alert.alert('Error', error.message)
             console.log("Sign In Failed")
@@ -49,7 +49,7 @@ const LoginScreen = ({navigation}) => {
             <View style={LoginStyles.buttonContainer}>
                 <Button
                     title = 'Create Account'
-                    onPress={() => navigation.navigate('ShowListings')}/>
+                    onPress={() => navigation.navigate('CreateAccountUser')}/>
             </View>
         </View>
     )
@@ -78,4 +78,4 @@ const LoginStyles = StyleSheet.create({
 
 });
 
-export default LoginScreen
+export default LoginUserScreen

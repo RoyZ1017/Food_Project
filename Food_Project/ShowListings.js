@@ -1,9 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
+import { fireStore } from '/Firebase.js'; 
+import { addDoc, collection, getDocs, query, orderBy} from "firebase/firestore";
 
 // Todo -> Add feature to delete listing
 
-const ShowListingsScreen = ({ listings }) => {
+const ShowListingsScreen = () => {
+    const [listings, setListings] = useState([]);
+    
+    const fetchListing = async () => {
+        try {
+            const querySnapshot = await getDocs(
+                query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))
+              );
+            
+            console.log(querySnapshot)
+            const listingData = []
+            querySnapshot.forEach((doc) => {
+                listingData.push(doc.data());
+                console.log(doc.data())
+            });
+            setListings(listingData)
+        } catch (error) {
+          console.error('Error fetching comments from Firestore:', error);
+        }
+      };
+    fetchListing();
     return (
         <ScrollView style={styles.container}>
             {listings.map((listing, index) => (

@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
+import { fireStore } from '/Firebase.js'; 
+import { addDoc, collection, getDocs, query, orderBy} from "firebase/firestore";
 
 // Todo -> Add feature to delete listing
 
-const AddListingScreen = ({navigation}) => {
+const AddListingScreen = () => {
 
     const [foodName, setFoodName] = useState('');
     const [description, setDescription] = useState('');
@@ -12,7 +14,31 @@ const AddListingScreen = ({navigation}) => {
     const [quantityAvailable, setQuantityAvailable] = useState('');
 
     const [listings, setListings] = useState([]);
-    const [listingCounter, setListingCounter] = useState(0);
+    const [newListing, setNewListing] = useState(0)
+
+    useEffect(() => {
+        // Fetch comments from Firestore
+        const fetchListing = async () => {
+            try {
+                const querySnapshot = await getDocs(
+                    query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))
+                  );
+                
+                console.log(querySnapshot)
+                const listingData = []
+                querySnapshot.forEach((doc) => {
+                    listingData.push(doc.data());
+                    console.log(doc.data())
+                });
+                setListings(listingData)
+            } catch (error) {
+              console.error('Error fetching comments from Firestore:', error);
+            }
+          };
+          
+    
+        fetchListing();
+      }, [newListing]);
 
     // Ensure only numbers are inputted in numeric text boxes
     const handleNumericInputChange = (value, setter) => {
@@ -21,19 +47,21 @@ const AddListingScreen = ({navigation}) => {
     };
 
     // Function to handle creation of a new listing
-    const createListing = () => {
-        // Create a new listing object
-        const newListing = {foodName, description,originalPrice,discountedPrice,quantityAvailable};
-
-        // Increment the listing counter
-        setListingCounter(listingCounter + 1);
-
-        // Add the new listing to the listings array
-        setListings([...listings, newListing]);
-
+    const createListing = async() => {
+        setNewListing(1)
+        const ReplyRef = collection(fireStore, "listings")
+        // console.log(commentsRef)
+        await addDoc(ReplyRef, {
+            foodName: foodName,
+            description: description,
+            originalPrice: originalPrice,
+            discountedPrice: discountedPrice,
+            quantityAvailable: quantityAvailable,
+        });
         // Clear the input fields
-        setFoodName(''); setDescription(''); setOriginalPrice(''); setDiscountedPrice(''); setQuantityAvailable('');
+        setFoodName(''); setDescription(''); setOriginalPrice(''); setDiscountedPrice(''); setQuantityAvailable(''); setNewListing(0)
     };
+
 
     return (
         <View style={ListingStyles.container}>

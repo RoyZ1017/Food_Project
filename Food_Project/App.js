@@ -5,8 +5,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import LoginScreen from './Login.js'
 import CreateAccountScreen from './CreateAccount.js'
 import AddListingScreen from './AddListing.js'
-import UserLoginScreen from './UserLogin.js'
+import LoginUserScreen from './LoginUser.js'
 import ShowListingsScreen from './ShowListings.js'
+import CreateAccountUserScreen from './CreateAccountUser.js';
 
 const Stack = createStackNavigator();
 
@@ -27,7 +28,7 @@ const HomeScreen = ({navigation}) => {
         <View style={{marginVertical: 5}} /> 
         <Button
           title='User'
-          onPress={() => navigation.navigate('UserLogin')}
+          onPress={() => navigation.navigate('LoginUser')}
         />
       </View>
       <View style={HomeStyles.footer}>
@@ -46,7 +47,8 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
         <Stack.Screen name="AddListing" component={AddListingScreen} />
-        <Stack.Screen name="UserLogin" component={UserLoginScreen} />
+        <Stack.Screen name="LoginUser" component={LoginUserScreen} />
+        <Stack.Screen name="CreateAccountUser" component={CreateAccountUserScreen} />
         <Stack.Screen name="ShowListings" component={ShowListingsScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
