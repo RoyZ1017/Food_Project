@@ -1,67 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
 import { fireStore } from '/Firebase.js'; 
-import { addDoc, collection, getDocs, query, orderBy} from "firebase/firestore";
-
-// Todo -> Add feature to delete listing
+import { addDoc, collection, getDocs, query, orderBy } from "firebase/firestore";
+import { Picker } from '@react-native-picker/picker';
 
 const AddListingScreen = () => {
-
     const [foodName, setFoodName] = useState('');
     const [description, setDescription] = useState('');
     const [originalPrice, setOriginalPrice] = useState('');
     const [discountedPrice, setDiscountedPrice] = useState('');
     const [quantityAvailable, setQuantityAvailable] = useState('');
-
+    const [foodType, setFoodType] = useState('');
     const [listings, setListings] = useState([]);
-    const [newListing, setNewListing] = useState(0)
+    const [newListing, setNewListing] = useState(0);
 
     useEffect(() => {
-        // Fetch comments from Firestore
         const fetchListing = async () => {
             try {
                 const querySnapshot = await getDocs(
                     query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))
-                  );
-                
-                console.log(querySnapshot)
-                const listingData = []
+                );
+                const listingData = [];
                 querySnapshot.forEach((doc) => {
                     listingData.push(doc.data());
-                    console.log(doc.data())
                 });
-                setListings(listingData)
+                setListings(listingData);
             } catch (error) {
-              console.error('Error fetching comments from Firestore:', error);
+                console.error('Error fetching comments from Firestore:', error);
             }
-          };
-          
-    
-        fetchListing();
-      }, [newListing]);
+        };
 
-    // Ensure only numbers are inputted in numeric text boxes
+        fetchListing();
+    }, [newListing]);
+
     const handleNumericInputChange = (value, setter) => {
         const numericValue = value.replace(/[^0-9.]/g, '');
         setter(numericValue);
     };
 
-    // Function to handle creation of a new listing
-    const createListing = async() => {
-        setNewListing(1)
-        const ReplyRef = collection(fireStore, "listings")
-        // console.log(commentsRef)
+    const createListing = async () => {
+        setNewListing(1);
+        const ReplyRef = collection(fireStore, "listings");
         await addDoc(ReplyRef, {
             foodName: foodName,
             description: description,
             originalPrice: originalPrice,
             discountedPrice: discountedPrice,
             quantityAvailable: quantityAvailable,
+            foodType: foodType,
         });
-        // Clear the input fields
-        setFoodName(''); setDescription(''); setOriginalPrice(''); setDiscountedPrice(''); setQuantityAvailable(''); setNewListing(0)
+        setFoodName('');
+        setDescription('');
+        setOriginalPrice('');
+        setDiscountedPrice('');
+        setQuantityAvailable('');
+        setFoodType('');
+        setNewListing(0);
     };
-
 
     return (
         <View style={ListingStyles.container}>
@@ -72,6 +67,18 @@ const AddListingScreen = () => {
                 value={foodName}
                 onChangeText={setFoodName}
             />
+            <View style={ListingStyles.pickerContainer}>
+                <Picker selectedValue={foodType}
+                    onValueChange={(itemValue) => setFoodType(itemValue)}
+                    style={ListingStyles.picker}>
+                    <Picker.Item label="Select Food Type" value="" />
+                    <Picker.Item label="Prepared Foods" value="Prepared Foods" />
+                    <Picker.Item label="Baked Goods" value="Baked Goods" />
+                    <Picker.Item label="Surprise Bag" value="Surprise Bag" />
+                    <Picker.Item label="Vegetarian" value="Vegetarian" />
+                    <Picker.Item label="Snacks" value="Snacks" />
+                </Picker>
+            </View>
             <TextInput
                 placeholder="Description of your product"
                 style={[ListingStyles.textInput, ListingStyles.textInputDescription]}
@@ -105,7 +112,7 @@ const AddListingScreen = () => {
                 <Button
                     title='Create Listing'
                     onPress={createListing}
-                    disabled={!foodName || !description || !originalPrice || !discountedPrice || !quantityAvailable}
+                    disabled={!foodName || !description || !originalPrice || !discountedPrice || !quantityAvailable || !foodType}
                 />
             </View>
             <ScrollView style={ListingStyles.listingsContainer}>
@@ -113,6 +120,7 @@ const AddListingScreen = () => {
                     <View key={index} style={ListingStyles.listingItem}>
                         <Text style={ListingStyles.listingTitle}>Listing {index + 1}</Text>
                         <Text>Food Name: {listing.foodName}</Text>
+                        <Text>Food Type: {listing.foodType}</Text>
                         <Text>Description: {listing.description}</Text>
                         <Text>Original Price: ${parseFloat(listing.originalPrice).toFixed(2)}</Text>
                         <Text>Discounted Price: ${parseFloat(listing.discountedPrice).toFixed(2)}</Text>
@@ -150,6 +158,17 @@ const ListingStyles = StyleSheet.create({
     numericInput: {
         marginBottom: 10,
     },
+    pickerContainer: {
+        marginBottom: 10,
+        backgroundColor: '#d3d3d3',
+        borderRadius: 10,
+        width: 200,
+        paddingHorizontal: 10,
+    },
+    picker: {
+        height: 40,
+        width: '100%',
+    },
     buttonContainer: {
         margin: 5,
         width: 200,
@@ -157,7 +176,7 @@ const ListingStyles = StyleSheet.create({
     listingsContainer: {
         marginTop: 20,
         maxHeight: '50%',
-        width:'30%'
+        width: '100%',
     },
     listingItem: {
         marginBottom: 10,
