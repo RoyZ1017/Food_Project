@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
+import { Button, StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { fireStore } from './Firebase.js'; 
 import { addDoc, collection, getDocs, query, orderBy } from "firebase/firestore";
 import { Picker } from '@react-native-picker/picker';
 
 const AddListingScreen = () => {
+    const [restaurantName, setRestaurantName] = useState('');
     const [foodName, setFoodName] = useState('');
     const [description, setDescription] = useState('');
     const [originalPrice, setOriginalPrice] = useState('');
     const [discountedPrice, setDiscountedPrice] = useState('');
     const [quantityAvailable, setQuantityAvailable] = useState('');
-    const [foodType, setFoodType] = useState('');
+    const [district, setDistrict] = useState('');
     const [listings, setListings] = useState([]);
     const [newListing, setNewListing] = useState(0);
+    const [address, setAddress] = useState('');
 
     useEffect(() => {
         const fetchListing = async () => {
@@ -22,7 +24,9 @@ const AddListingScreen = () => {
                 );
                 const listingData = [];
                 querySnapshot.forEach((doc) => {
-                    listingData.push(doc.data());
+                    if (doc.data().quantityAvailable > 0) {
+                        listingData.push(doc.data());
+                    }
                 });
                 setListings(listingData);
             } catch (error) {
@@ -42,43 +46,48 @@ const AddListingScreen = () => {
         setNewListing(1);
         const ReplyRef = collection(fireStore, "listings");
         await addDoc(ReplyRef, {
+            restaurantName: restaurantName,
             foodName: foodName,
             description: description,
             originalPrice: originalPrice,
             discountedPrice: discountedPrice,
             quantityAvailable: quantityAvailable,
-            foodType: foodType,
+            district: district,
+            address: address
         });
+        setRestaurantName('');
         setFoodName('');
         setDescription('');
         setOriginalPrice('');
         setDiscountedPrice('');
         setQuantityAvailable('');
-        setFoodType('');
+        setDistrict('');
         setNewListing(0);
+        setAddress('');
+        setDistrict('');
+    };
+
+    const openMaps = (address) => {
+        const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+        console.log(mapsUrl)
+        Linking.openURL(mapsUrl);
     };
 
     return (
         <View style={ListingStyles.container}>
             <Text style={ListingStyles.title}>Add a food listing!</Text>
             <TextInput
+                placeholder="Name of your restaurant"
+                style={ListingStyles.textInput}
+                value={restaurantName}
+                onChangeText={setRestaurantName}
+            />
+            <TextInput
                 placeholder="Name of your food item"
                 style={ListingStyles.textInput}
                 value={foodName}
                 onChangeText={setFoodName}
             />
-            <View style={ListingStyles.pickerContainer}>
-                <Picker selectedValue={foodType}
-                    onValueChange={(itemValue) => setFoodType(itemValue)}
-                    style={ListingStyles.picker}>
-                    <Picker.Item label="Select Food Type" value="" />
-                    <Picker.Item label="Prepared Foods" value="Prepared Foods" />
-                    <Picker.Item label="Baked Goods" value="Baked Goods" />
-                    <Picker.Item label="Surprise Bag" value="Surprise Bag" />
-                    <Picker.Item label="Vegetarian" value="Vegetarian" />
-                    <Picker.Item label="Snacks" value="Snacks" />
-                </Picker>
-            </View>
             <TextInput
                 placeholder="Description of your product"
                 style={[ListingStyles.textInput, ListingStyles.textInputDescription]}
@@ -87,6 +96,23 @@ const AddListingScreen = () => {
                 value={description}
                 onChangeText={setDescription}
             />
+            <TextInput
+                placeholder="Address"
+                style={ListingStyles.textInput}
+                value={address}
+                onChangeText={setAddress}
+            />
+            <View style={ListingStyles.pickerContainer}>
+                <Picker selectedValue={district}
+                    onValueChange={(itemValue) => setDistrict(itemValue)}
+                    style={ListingStyles.picker}>
+                    <Picker.Item label="District" value="" />
+                    <Picker.Item label="Etobicoke-York" value="Etobicoke-York" />
+                    <Picker.Item label="North York" value="North York" />
+                    <Picker.Item label="Toronto & East" value="Toronto & East" />
+                    <Picker.Item label="Scarborough" value="Scarborough" />
+                </Picker>
+            </View>
             <TextInput
                 placeholder="Original Price"
                 style={[ListingStyles.textInput, ListingStyles.numericInput]}
@@ -112,16 +138,23 @@ const AddListingScreen = () => {
                 <Button
                     title='Create Listing'
                     onPress={createListing}
-                    disabled={!foodName || !description || !originalPrice || !discountedPrice || !quantityAvailable || !foodType}
+                    disabled={!foodName || !description || !originalPrice || !discountedPrice || !quantityAvailable || !district ||!address ||!restaurantName}
                 />
             </View>
             <ScrollView style={ListingStyles.listingsContainer}>
                 {listings.map((listing, index) => (
                     <View key={index} style={ListingStyles.listingItem}>
                         <Text style={ListingStyles.listingTitle}>Listing {index + 1}</Text>
+                        <Text>Restaurant Name: {listing.restaurantName}</Text>
                         <Text>Food Name: {listing.foodName}</Text>
-                        <Text>Food Type: {listing.foodType}</Text>
                         <Text>Description: {listing.description}</Text>
+                        <TouchableOpacity onPress={() => openMaps(listing.address)}>
+                        <Text style={{ flexDirection: 'row' }}>
+                            <Text>Address: </Text>
+                            <Text style={{ color: 'blue' }}>{listing.address}</Text>
+                        </Text>
+                        </TouchableOpacity>
+                        <Text>District: {listing.district}</Text>
                         <Text>Original Price: ${parseFloat(listing.originalPrice).toFixed(2)}</Text>
                         <Text>Discounted Price: ${parseFloat(listing.discountedPrice).toFixed(2)}</Text>
                         <Text>Quantity Available: {listing.quantityAvailable}</Text>
