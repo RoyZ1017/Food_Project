@@ -13,7 +13,7 @@ const LoginScreen = ({navigation}) => {
             const response = await signInWithEmailAndPassword(auth, email, password)
             Alert.alert('Success', 'Sign in Success')
             console.log("Sign In Successful")
-            navigation.navigate('AddListing')
+            navigation.navigate('AddListing', { email: email })
           } catch (error) {
             Alert.alert('Error', error.message)
             console.log("Sign In Failed")

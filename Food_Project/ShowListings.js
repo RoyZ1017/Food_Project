@@ -2,55 +2,84 @@ import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, ScrollView, TouchableOpacity, Linking, Alert} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { fireStore } from './Firebase.js'; 
-import { getDocs, collection, query, orderBy, doc, updateDoc, deleteDoc} from "firebase/firestore";
+import { getDocs, collection, query, orderBy, doc, updateDoc, deleteDoc, addDoc} from "firebase/firestore";
 
-const ShowListingsScreen = () => {
+const ShowListingsScreen = ({ route }) => {
     const [listings, setListings] = useState([]);
     const [myOrders, setMyOrders] = useState([]);
     const [selectedDistrict, setSelectedDistrict] = useState('Any');
+    const { email } = route.params;
 
-    useEffect(() => {
-        const fetchListings = async () => {
-            try {
-                const querySnapshot = await getDocs(
-                    query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))
-                );
-                
-                const listingData = [];
-                querySnapshot.forEach((doc) => {
-                    if (doc.data().quantityAvailable > 0) {
-                        listingData.push({ id: doc.id, ...doc.data() });
-                    }
-                });
-                setListings(listingData);
-            } catch (error) {
-                console.error('Error fetching listings from Firestore:', error);
-            }
-        };
-
-        fetchListings();
-    }, [setListings]);
-
-    const reserveListing = async (listingId, quantityAvailable) => {
+    const fetchListings = async () => {
         try {
-            if (quantityAvailable > 0) {
+            const querySnapshot = await getDocs(
+                query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))
+            );
+            
+            const listingData = [];
+            querySnapshot.forEach((doc) => {
+                if (doc.data().quantityAvailable > 0 && (!doc.data().reserved || ! doc.data().reserved.includes(email)) && !doc.data().user) {
+                    listingData.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            setListings(listingData);
+
+            const userOrders = [];
+            querySnapshot.forEach((doc) => {
+                if (doc.data().user == email) {
+                    userOrders.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            setMyOrders(userOrders)
+        } catch (error) {
+            console.error('Error fetching listings from Firestore:', error);
+        }
+    };
+    useEffect(() => {
+        fetchListings();
+    }, []);
+
+    const reserveListing = async (listingId, listing) => {
+        try {
+            if (listing.quantityAvailable > 1) {
                 const docRef = doc(fireStore, "listings", listingId);
                 await updateDoc(docRef, {
-                    quantityAvailable: quantityAvailable - 1
+                    quantityAvailable: listing.quantityAvailable - 1
                 });
-                Alert.alert('Success', 'Order Placed')
-                setMyOrders([...myOrders, listingId]);
-    
+                await updateDoc(docRef, {
+                    reserved: listing.reserved.concat(email)
+                });
             }
+
+            if (listing.quantityAvailable == 1) {
+                const docRef = doc(fireStore, "listings", listingId);
+                await deleteDoc(docRef);
+            }
+
+            const ReplyRef = collection(fireStore, "listings");
+            await addDoc(ReplyRef, {
+                restaurantName: listing.restaurantName,
+                foodName: listing.foodName,
+                description: listing.description,
+                originalPrice: listing.originalPrice,
+                discountedPrice: listing.discountedPrice,
+                quantityAvailable: 1,
+                district: listing.district,
+                address: listing.address,
+                user: email
+            });
+            Alert.alert('Success', 'Order Placed')
+            fetchListings();
+    
         } catch (error) {
             console.error('Error reserving listing:', error);
         }
     };
 
-    const getFoodItemName = (orderId) => {
-        const orderListing = listings.find(listing => listing.id === orderId);
-        return orderListing ? orderListing.foodName : 'Unknown';
-    };
+    // const getFoodItemName = (orderId) => {
+    //     const orderListing = listings.find(listing => listing.id === orderId);
+    //     return orderListing ? orderListing.foodName : 'Unknown';
+    // };
 
     const openMaps = (address) => {
         const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
@@ -97,16 +126,16 @@ const ShowListingsScreen = () => {
                         <Button
                             title="Reserve"
                             disabled={myOrders.includes(listing.id)}
-                            onPress={() => reserveListing(listing.id, listing.quantityAvailable)}
+                            onPress={() => reserveListing(listing.id, listing)}
                         />
                     </View>
                 </View>
             ))}
             <Text style={styles.title}>My Orders</Text>
-            {myOrders.map((orderId, index) => (
+            {myOrders.map((order, index) => (
                 <View key={index} style={styles.orderItem}>
                     <Text>Order {index + 1}</Text>
-                    <Text>Food Item: {getFoodItemName(orderId)}</Text>
+                    <Text>Food Item: {order.foodName}</Text>
                 </View>
             ))}
         </ScrollView>

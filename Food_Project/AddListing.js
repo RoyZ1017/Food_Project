@@ -4,7 +4,7 @@ import { fireStore } from './Firebase.js';
 import { addDoc, collection, getDocs, query, orderBy } from "firebase/firestore";
 import { Picker } from '@react-native-picker/picker';
 
-const AddListingScreen = () => {
+const AddListingScreen = ({ route }) => {
     const [restaurantName, setRestaurantName] = useState('');
     const [foodName, setFoodName] = useState('');
     const [description, setDescription] = useState('');
@@ -16,6 +16,8 @@ const AddListingScreen = () => {
     const [newListing, setNewListing] = useState(0);
     const [address, setAddress] = useState('');
 
+    const { email } = route.params;
+
     useEffect(() => {
         const fetchListing = async () => {
             try {
@@ -24,7 +26,7 @@ const AddListingScreen = () => {
                 );
                 const listingData = [];
                 querySnapshot.forEach((doc) => {
-                    if (doc.data().quantityAvailable > 0) {
+                    if (doc.data().quantityAvailable > 0 && !doc.data().user && doc.data().creator == email) {
                         listingData.push(doc.data());
                     }
                 });
@@ -53,7 +55,9 @@ const AddListingScreen = () => {
             discountedPrice: discountedPrice,
             quantityAvailable: quantityAvailable,
             district: district,
-            address: address
+            address: address,
+            reserved: [],
+            creator: email
         });
         setRestaurantName('');
         setFoodName('');
