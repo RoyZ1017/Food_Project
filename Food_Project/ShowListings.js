@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { fireStore } from '/Firebase.js'; 
+import { fireStore } from './Firebase.js'; 
 import { getDocs, collection, query, orderBy, doc, updateDoc } from "firebase/firestore";
 
 const ShowListingsScreen = () => {

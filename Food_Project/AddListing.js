@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
-import { fireStore } from '/Firebase.js'; 
+import { fireStore } from './Firebase.js'; 
 import { addDoc, collection, getDocs, query, orderBy } from "firebase/firestore";
 import { Picker } from '@react-native-picker/picker';
 
