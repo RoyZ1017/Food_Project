@@ -14,25 +14,25 @@ const Stack = createStackNavigator();
 const HomeScreen = ({navigation}) => {
   return (
     <View style={HomeStyles.container}>
-      <Text style={HomeStyles.title}>Welcome to Food Project</Text> 
+      <Text style={HomeStyles.title}>Welcome to FoodForAll!</Text> 
       <Image
         source={{uri:'https://png.pngtree.com/png-vector/20230906/ourmid/pngtree-paper-bag-vector-png-image_10015259.png'}}
         style={{width: 125, height: 125}}
       />
-      <Text style={HomeStyles.subtitle}>Login as:</Text>
+      <Text style={HomeStyles.subtitle}>Login as a:</Text>
       <View style={HomeStyles.buttonContainer}>
         <Button
           title='Restaurant/Store'
-          onPress={() => navigation.navigate('Login')}
+          onPress={() => navigation.navigate('Restaurant Login')}
         />
         <View style={{marginVertical: 5}} /> 
         <Button
           title='User'
-          onPress={() => navigation.navigate('LoginUser')}
+          onPress={() => navigation.navigate('User Login')}
         />
       </View>
       <View style={HomeStyles.footer}>
-        <Text style={HomeStyles.subtitle}>This app was made by{'\n'}Praneeth Suryadevara and Roy Zhang!</Text>
+        <Text style={HomeStyles.footerText}>This app was made by{'\n'}Praneeth Suryadevara and Roy Zhang!</Text>
       </View>
       <StatusBar style="auto"/>
     </View>
@@ -44,11 +44,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home'>
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
-        <Stack.Screen name="AddListing" component={AddListingScreen} />
-        <Stack.Screen name="LoginUser" component={LoginUserScreen} />
-        <Stack.Screen name="CreateAccountUser" component={CreateAccountUserScreen} />
+        <Stack.Screen name="Restaurant Login" component={LoginScreen} />
+        <Stack.Screen name="Create Restaurant Account" component={CreateAccountScreen} />
+        <Stack.Screen name="Add Listing" component={AddListingScreen} />
+        <Stack.Screen name="User Login" component={LoginUserScreen} />
+        <Stack.Screen name="Create User Account" component={CreateAccountUserScreen} />
         <Stack.Screen name="ShowListings" component={ShowListingsScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
@@ -75,7 +75,13 @@ const HomeStyles = StyleSheet.create({
     marginTop: 10
   },
   subtitle: {
-    fontSize: 13,
+    fontSize: 16,
+    marginTop: 40,
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  footerText: {
+    fontSize: 14,
     marginTop: 40,
     marginBottom: 25,
     textAlign: 'center',
