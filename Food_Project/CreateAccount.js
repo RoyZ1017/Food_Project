@@ -19,7 +19,7 @@ const CreateAccountScreen = ({navigation}) => {
             const response = await createUserWithEmailAndPassword(auth, email, password)
             Alert.alert('Success', 'Sign in Success')
             console.log("Sign In Successful")
-            navigation.navigate('AddListing')
+            navigation.navigate('Login')
 
 
           } catch (error) {
@@ -118,7 +118,7 @@ const CreateAccountScreen = ({navigation}) => {
                 <Button
                     title = 'Create Account'
                     onPress={signUp}
-                    disabled={!email || !password || !name || !location || !openingTimeHour || !openingTimeMinute || !closingTimeHour || !closingTimeMinute}
+                    disabled={!email || !password || !name || !location || !openingTimeHour || !closingTimeHour}
                 />
             </View>
         </View>

@@ -11,6 +11,7 @@ const ShowListingsScreen = ({ route }) => {
     const { email } = route.params;
 
     const fetchListings = async () => {
+        console.log("fetching Now")
         try {
             const querySnapshot = await getDocs(
                 query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))

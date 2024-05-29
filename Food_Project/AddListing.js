@@ -20,6 +20,7 @@ const AddListingScreen = ({ route }) => {
 
     useEffect(() => {
         const fetchListing = async () => {
+            console.log("fetching")
             try {
                 const querySnapshot = await getDocs(
                     query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))
