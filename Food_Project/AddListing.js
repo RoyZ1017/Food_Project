@@ -79,66 +79,70 @@ const AddListingScreen = ({ route }) => {
     };
 
     return (
-        <View style={ListingStyles.container}>
-            <Text style={ListingStyles.title}>Add a food listing!</Text>
-            <TextInput
-                placeholder="Name of your restaurant"
-                style={ListingStyles.textInput}
-                value={restaurantName}
-                onChangeText={setRestaurantName}
-            />
-            <TextInput
-                placeholder="Name of your food item"
-                style={ListingStyles.textInput}
-                value={foodName}
-                onChangeText={setFoodName}
-            />
-            <TextInput
-                placeholder="Description of your product"
-                style={[ListingStyles.textInput, ListingStyles.textInputDescription]}
-                multiline={true}
-                numberOfLines={4}
-                value={description}
-                onChangeText={setDescription}
-            />
-            <TextInput
-                placeholder="Address"
-                style={ListingStyles.textInput}
-                value={address}
-                onChangeText={setAddress}
-            />
-            <View style={ListingStyles.pickerContainer}>
-                <Picker selectedValue={district}
-                    onValueChange={(itemValue) => setDistrict(itemValue)}
-                    style={ListingStyles.picker}>
-                    <Picker.Item label="District" value="" />
-                    <Picker.Item label="Etobicoke-York" value="Etobicoke-York" />
-                    <Picker.Item label="North York" value="North York" />
-                    <Picker.Item label="Toronto & East" value="Toronto & East" />
-                    <Picker.Item label="Scarborough" value="Scarborough" />
-                </Picker>
+        <ScrollView contentContainerStyle={ListingStyles.container}>
+            <View style={ListingStyles.inputContainer}>
+                <Text style={ListingStyles.title}>Add a food listing!</Text>
+                <Text style={ListingStyles.subtitle}>Enter all the information needed for your listing. Make sure your 
+                added location is a valid location on Google Maps.</Text>
+                <TextInput
+                    placeholder="Name of your restaurant"
+                    style={ListingStyles.textInput}
+                    value={restaurantName}
+                    onChangeText={setRestaurantName}
+                />
+                <TextInput
+                    placeholder="Name of your food item"
+                    style={ListingStyles.textInput}
+                    value={foodName}
+                    onChangeText={setFoodName}
+                />
+                <TextInput
+                    placeholder="Description of your product"
+                    style={[ListingStyles.textInput, ListingStyles.textInputDescription]}
+                    multiline={true}
+                    numberOfLines={4}
+                    value={description}
+                    onChangeText={setDescription}
+                />
+                <TextInput
+                    placeholder="Address"
+                    style={ListingStyles.textInput}
+                    value={address}
+                    onChangeText={setAddress}
+                />
+                <View style={ListingStyles.pickerContainer}>
+                    <Picker selectedValue={district}
+                        onValueChange={(itemValue) => setDistrict(itemValue)}
+                        style={ListingStyles.picker}>
+                        <Picker.Item label="District" value="" />
+                        <Picker.Item label="Etobicoke-York" value="Etobicoke-York" />
+                        <Picker.Item label="North York" value="North York" />
+                        <Picker.Item label="Toronto & East" value="Toronto & East" />
+                        <Picker.Item label="Scarborough" value="Scarborough" />
+                    </Picker>
+                </View>
+                <TextInput
+                    placeholder="Original Price"
+                    style={[ListingStyles.textInput, ListingStyles.numericInput]}
+                    keyboardType="numeric"
+                    value={originalPrice}
+                    onChangeText={(value) => handleNumericInputChange(value, setOriginalPrice)}
+                />
+                <TextInput
+                    placeholder="Discounted Price"
+                    style={[ListingStyles.textInput, ListingStyles.numericInput]}
+                    keyboardType="numeric"
+                    value={discountedPrice}
+                    onChangeText={(value) => handleNumericInputChange(value, setDiscountedPrice)}
+                />
+                <TextInput
+                    placeholder="Quantity Available"
+                    style={[ListingStyles.textInput, ListingStyles.numericInput]}
+                    keyboardType="numeric"
+                    value={quantityAvailable}
+                    onChangeText={(value) => handleNumericInputChange(value, setQuantityAvailable)}
+                />
             </View>
-            <TextInput
-                placeholder="Original Price"
-                style={[ListingStyles.textInput, ListingStyles.numericInput]}
-                keyboardType="numeric"
-                value={originalPrice}
-                onChangeText={(value) => handleNumericInputChange(value, setOriginalPrice)}
-            />
-            <TextInput
-                placeholder="Discounted Price"
-                style={[ListingStyles.textInput, ListingStyles.numericInput]}
-                keyboardType="numeric"
-                value={discountedPrice}
-                onChangeText={(value) => handleNumericInputChange(value, setDiscountedPrice)}
-            />
-            <TextInput
-                placeholder="Quantity Available"
-                style={[ListingStyles.textInput, ListingStyles.numericInput]}
-                keyboardType="numeric"
-                value={quantityAvailable}
-                onChangeText={(value) => handleNumericInputChange(value, setQuantityAvailable)}
-            />
             <View style={ListingStyles.buttonContainer}>
                 <Button
                     title='Create Listing'
@@ -146,10 +150,12 @@ const AddListingScreen = ({ route }) => {
                     disabled={!foodName || !description || !originalPrice || !discountedPrice || !quantityAvailable || !district ||!address ||!restaurantName}
                 />
             </View>
-            <ScrollView style={ListingStyles.listingsContainer}>
+            <Text style={ListingStyles.title}>View your food listings:</Text>
+            <Text style={ListingStyles.subtitle}>See the information of your added listings.</Text>
+            <ScrollView contentContainerStyle={ListingStyles.listingsContainer}>
                 {listings.map((listing, index) => (
                     <View key={index} style={ListingStyles.listingItem}>
-                        <Text style={ListingStyles.listingTitle}>Listing {index + 1}</Text>
+                        <Text style={ListingStyles.listingTitle}>LISTING {index + 1}</Text>
                         <Text>Restaurant Name: {listing.restaurantName}</Text>
                         <Text>Food Name: {listing.foodName}</Text>
                         <Text>Description: {listing.description}</Text>
@@ -166,28 +172,39 @@ const AddListingScreen = ({ route }) => {
                     </View>
                 ))}
             </ScrollView>
-        </View>
+        </ScrollView>
     );
 }
 
 const ListingStyles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
+        flexGrow: 1,
         paddingHorizontal: 20,
+    },
+    inputContainer: {
+        width: '100%',
     },
     title: {
         marginBottom: 20,
         marginTop: 30,
         fontSize: 20,
         fontWeight: 'bold',
+        textAlign: 'left',
+    },
+    subtitle: {
+        marginBottom: 20,
+        fontSize: 16,
+        textAlign: 'left',
     },
     textInput: {
-        marginBottom: 10,
-        backgroundColor: '#d3d3d3',
-        borderRadius: 10,
-        width: 200,
-        paddingHorizontal: 10,
+        width: '70%',
+        padding: 10,
+        marginVertical: 10,
+        borderWidth: 2,
+        borderColor: '#ddd',
+        borderRadius: 5,
+        backgroundColor: '#f9f9f9',
+        alignSelf: 'center'
     },
     textInputDescription: {
         height: 90,
@@ -197,36 +214,43 @@ const ListingStyles = StyleSheet.create({
         marginBottom: 10,
     },
     pickerContainer: {
-        marginBottom: 10,
-        backgroundColor: '#d3d3d3',
+        marginBottom: 10, marginTop: 10,
+        backgroundColor: '#f9f9f9',
         borderRadius: 10,
-        width: 200,
+        borderColor: '#ddd',
+        width: '70%',
         paddingHorizontal: 10,
+        alignSelf: 'center',
     },
     picker: {
         height: 40,
         width: '100%',
     },
     buttonContainer: {
-        margin: 5,
-        width: 200,
+        marginTop: 15, marginBottom: 25,
+        width: '45%',
+        alignSelf: 'center',
     },
     listingsContainer: {
         marginTop: 20,
-        maxHeight: '50%',
+        maxHeight: '100%',
         width: '100%',
     },
     listingItem: {
-        marginBottom: 10,
-        backgroundColor: '#f0f0f0',
-        padding: 10,
+        marginBottom: 20, 
+        backgroundColor: '#fffdfa', 
+        padding: 15,
         borderRadius: 10,
+        borderWidth: 3,
+        borderColor: '#d0d0d0',
     },
     listingTitle: {
         fontWeight: 'bold',
-        fontSize: 16,
-        marginBottom: 5,
+        fontSize: 18,
+        marginBottom: 15,
+        textAlign: 'center',
     },
 });
 
 export default AddListingScreen;
+
