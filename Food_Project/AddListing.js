@@ -2,9 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { fireStore } from './Firebase.js'; 
 import { addDoc, collection, getDocs, query, orderBy } from "firebase/firestore";
-import ModalDropdown from 'react-native-modal-dropdown';
+import ModalDropdown from 'react-native-modal-dropdown'; // Import dropdown component
 
+/**
+ * AddListingScreen Component
+ * 
+ * @param {Object} route - Route object containing parameters passed to this screen
+ * @returns {JSX.Element} - The rendered component
+ */
 const AddListingScreen = ({ route }) => {
+    // State variables to manage user inputs and listings
     const [restaurantName, setRestaurantName] = useState('');
     const [foodName, setFoodName] = useState('');
     const [description, setDescription] = useState('');
@@ -15,13 +22,17 @@ const AddListingScreen = ({ route }) => {
     const [listings, setListings] = useState([]);
     const [newListing, setNewListing] = useState(0);
     const [address, setAddress] = useState('');
+    const { email } = route.params; // Get email from route parameters
 
-    const { email } = route.params;
-
+    /**
+     * 
+     * Effect to fetch listings from Firestore and update the state.
+     */
     useEffect(() => {
         const fetchListing = async () => {
             console.log("fetching")
             try {
+                // Query Firestore to get obtain listings ordered by discounted price in a descending order
                 const querySnapshot = await getDocs(
                     query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))
                 );
@@ -40,11 +51,21 @@ const AddListingScreen = ({ route }) => {
         fetchListing();
     }, [newListing]);
 
+    /**
+     * 
+     * Handle numeric input changes by restricting input to numeric values.
+     * @param {string} value - The input value from the text field.
+     * @param {function} setter - The state setter function for the corresponding state variable.
+     */
     const handleNumericInputChange = (value, setter) => {
         const numericValue = value.replace(/[^0-9.]/g, '');
         setter(numericValue);
     };
 
+    /**
+     * 
+     * Create a new listing in Firestore and reset the form inputs.
+     */
     const createListing = async () => {
         setNewListing(1);
         const ReplyRef = collection(fireStore, "listings");
@@ -72,6 +93,11 @@ const AddListingScreen = ({ route }) => {
         setDistrict('');
     };
 
+    /**
+     * 
+     * Open Google Maps with the provided address.
+     * @param {string} address - The address to open in Google Maps.
+     */
     const openMaps = (address) => {
         const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
         console.log(mapsUrl)
@@ -175,6 +201,7 @@ const AddListingScreen = ({ route }) => {
     );
 }
 
+// Styling for the screen
 const ListingStyles = StyleSheet.create({
     container: {
         flexGrow: 1,

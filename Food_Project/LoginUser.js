@@ -3,11 +3,24 @@ import { Button, StyleSheet, Text, View, Image, TextInput, Alert, TouchableWitho
 import { firebaseAuth } from './Firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
+/**
+ * LoginUserScreen Component
+ * 
+ * @param {Object} navigation - The navigation object from React Navigation
+ * @returns {JSX.Element} - The rendered LoginUserScreen component
+ */
 const LoginUserScreen = ({ navigation }) => {
+
+    // State hooks for email and password
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const auth = firebaseAuth;
 
+    /**
+     * Handles user sign-in with Firebase Authentication
+     * 
+     * @returns {void}
+     */
     const signIn = async () => {
         try {
             const response = await signInWithEmailAndPassword(auth, email, password);
@@ -75,7 +88,7 @@ const LoginStyles = StyleSheet.create({
         marginBottom: 20,
     },
     headerText: {
-        fontSize: 18,
+        fontSize: 19,
         fontWeight: 'bold',
         marginBottom: 20,
     },

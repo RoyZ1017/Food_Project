@@ -11,6 +11,12 @@ import CreateAccountUserScreen from './CreateAccountUser.js';
 
 const Stack = createStackNavigator();
 
+/**
+ * HomeScreen Component
+ * 
+ * @param {Object} navigation - The navigation object from React Navigation
+ * @returns {JSX.Element} - Rendered HomeScreen component
+ */
 const HomeScreen = ({navigation}) => {
   return (
     <View style={HomeStyles.container}>
@@ -39,6 +45,11 @@ const HomeScreen = ({navigation}) => {
   );
 }
 
+/**
+ * App Component
+ * 
+ * @returns {JSX.Element} - The main App component that sets up the navigation stack
+ */
 export default function App() {  
   return (
     <NavigationContainer>
@@ -55,6 +66,7 @@ export default function App() {
   )
 }
 
+// Styles for the HomeScreen component 
 const HomeStyles = StyleSheet.create({
   container: {
     flex: 1,

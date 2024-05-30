@@ -4,14 +4,28 @@ import ModalDropdown from 'react-native-modal-dropdown';
 import { fireStore } from './Firebase.js'; 
 import { getDocs, collection, query, orderBy, doc, updateDoc, deleteDoc, addDoc } from "firebase/firestore";
 
+/**
+ * ShowListingsScreen Component
+ * 
+ * @param {Object} route - The route object from React Navigation
+ * @returns {JSX.Element} - The rendered ShowListingsScreen component
+ */
 const ShowListingsScreen = ({ route }) => {
+
+    // State hooks to manage listings, orders, selected district, and user email    
     const [listings, setListings] = useState([]);
     const [myOrders, setMyOrders] = useState([]);
     const [selectedDistrict, setSelectedDistrict] = useState('Any');
     const { email } = route.params;
 
+    // List of districts to be used in the dropdown
     const districts = ['Any', 'Etobicoke-York', 'North York', 'Toronto & East', 'Scarborough'];
 
+    /**
+     * Fetches listings from Firestore and updates state
+     * 
+     * @returns {void}
+     */
     const fetchListings = async () => {
         console.log("fetching Now");
         try {
@@ -39,10 +53,18 @@ const ShowListingsScreen = ({ route }) => {
         }
     };
     
+    // Fetch listing once component mounts
     useEffect(() => {
         fetchListings();
     }, []);
 
+     /**
+     * Reserves a listing and updates Firestore
+     * 
+     * @param {string} listingId - The ID of the listing to reserve
+     * @param {Object} listing - The listing object
+     * @returns {void}
+     */
     const reserveListing = async (listingId, listing) => {
         try {
             if (listing.quantityAvailable > 1) {
@@ -75,6 +97,13 @@ const ShowListingsScreen = ({ route }) => {
         }
     };
 
+    /**
+     * Removes an order and updates Firestore accordingly
+     * 
+     * @param {string} orderId - The ID of the order to remove
+     * @param {Object} order - The order object
+     * @returns {void}
+     */
     const removeOrder = async (orderId, order) => {
         try {
             const docRef = doc(fireStore, "listings", orderId);
@@ -106,6 +135,12 @@ const ShowListingsScreen = ({ route }) => {
         }
     };
 
+    /**
+     * Opens Google Maps with the given address
+     * 
+     * @param {string} address - The address to open in Google Maps
+     * @returns {void}
+     */
     const openMaps = (address) => {
         const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
         Linking.openURL(mapsUrl);
@@ -198,6 +233,7 @@ const ShowListingsScreen = ({ route }) => {
     );
 }
 
+// Styles for the ShowListingsScreen component
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -4,7 +4,15 @@ import ModalDropdown from 'react-native-modal-dropdown';
 import { firebaseAuth } from './Firebase.js';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
+/**
+ * CreateAccountScreen Component
+ * 
+ * @param {Object} navigation - The navigation object from React Navigation
+ * @returns {JSX.Element} - The rendered CreateAccountScreen component
+ */
 const CreateAccountScreen = ({ navigation }) => {
+    
+    // State hooks to manage inputs and potential authentication errors
     const [name, setName] = useState('');
     const [location, setLocation] = useState('');
     const [email, setEmail] = useState('');
@@ -16,6 +24,10 @@ const CreateAccountScreen = ({ navigation }) => {
     const [authError, setAuthError] = useState(null);
     const auth = firebaseAuth;
 
+    /**
+     * Handles user sign-up with Firebase Authentication 
+     * @returns {void}
+     */
     const signUp = async () => {
         try {
             if (!validateTime()) {
@@ -33,9 +45,15 @@ const CreateAccountScreen = ({ navigation }) => {
         }
     }
 
+    // Generated options for the minutes and hours dropdowns 
     const hours = Array.from(Array(24).keys()).map(hour => hour.toString().padStart(2, '0'));
     const minutes = Array.from(Array(60).keys()).map(minute => minute.toString().padStart(2, '0'));
 
+    /**
+     * Validates that the opening time is before the closing time
+     * 
+     * @returns {boolean} - True if the opening time is before the closing time, otherwise false
+     */
     const validateTime = () => {
         if (parseInt(openingTimeHour) > parseInt(closingTimeHour) ||
             (parseInt(openingTimeHour) === parseInt(closingTimeHour) && parseInt(openingTimeMinute) >= parseInt(closingTimeMinute))) {
@@ -127,6 +145,7 @@ const CreateAccountScreen = ({ navigation }) => {
     );
 }
 
+// Styles for the CreateAccountScreen component
 const CreateAccountStyles = StyleSheet.create({
     container: {
         flex: 1,

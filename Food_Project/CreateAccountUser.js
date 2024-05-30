@@ -3,12 +3,25 @@ import { Button, StyleSheet, Text, View, Image, TextInput, Alert, ScrollView, To
 import { firebaseAuth } from './Firebase.js';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
+/**
+ * CreateAccountUserScreen Component
+ * 
+ * @param {Object} navigation - The navigation object provided by React Navigation
+ * @returns {JSX.Element} - The rendered CreateAccountUserScreen component
+ */
 const CreateAccountUserScreen = ({ navigation }) => {
+
+    // State hooks to manage form inputs
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const auth = firebaseAuth;
     
+    /**
+     * Handles user sign-up with Firebase Authentication
+     * 
+     * @returns {void}
+     */
     const signUp = async () => {
         try {
             const response = await createUserWithEmailAndPassword(auth, email, password);
@@ -62,6 +75,7 @@ const CreateAccountUserScreen = ({ navigation }) => {
     )
 }
 
+// Styles for the component
 const CreateAccountStyles = StyleSheet.create({
     container: {
         flex: 1,
