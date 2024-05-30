@@ -218,7 +218,12 @@ const ShowListingsScreen = ({ route }) => {
                             <View style={styles.textContainer}>
                                 <Text style={styles.listItemText}>Rest. Name: {order.restaurantName}</Text>
                                 <Text style={styles.listItemText}>Food Item: {order.foodName}</Text>
-                                <Text style={styles.listItemText}>Address: {order.address}</Text>
+                                <TouchableOpacity onPress={() => openMaps(order.address)}>
+                                    <Text style={styles.listItemText}>
+                                        <Text>Address: </Text>
+                                        <Text style={{ color: 'blue' }}>{order.address}</Text>
+                                    </Text>
+                                </TouchableOpacity>
                             </View>
                             <Button
                                 title="Remove"
