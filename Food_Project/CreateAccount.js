@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View, TextInput, Alert, Picker, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Button, StyleSheet, Text, View, TextInput, Alert, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import ModalDropdown from 'react-native-modal-dropdown';
 import { firebaseAuth } from './Firebase.js';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
@@ -21,14 +22,14 @@ const CreateAccountScreen = ({ navigation }) => {
                 console.log("Invalid Time")
                 return false;
             }
-            const response = await createUserWithEmailAndPassword(auth, email, password)
-            Alert.alert('Success', 'Sign in Success')
-            console.log("Sign In Successful")
-            navigation.navigate('Restaurant Login')
+            const response = await createUserWithEmailAndPassword(auth, email, password);
+            Alert.alert('Success', 'Sign in Success');
+            console.log("Sign In Successful");
+            navigation.navigate('Restaurant Login');
         } catch (error) {
             setAuthError(error.message);
-            console.log(error.message)
-            console.log(email, password)
+            console.log(error.message);
+            console.log(email, password);
         }
     }
 
@@ -63,42 +64,42 @@ const CreateAccountScreen = ({ navigation }) => {
                     onChangeText={(text) => setLocation(text)}
                 />
                 <View style={CreateAccountStyles.timePickerContainer}>
-                    <Text>Opening Time:</Text>
-                    <Picker
-                        style={CreateAccountStyles.timePicker}
-                        selectedValue={openingTimeHour}
-                        onValueChange={(itemValue) => setOpeningTimeHour(itemValue)}>
-                        {hours.map(hour => (
-                            <Picker.Item key={hour} label={hour.toString()} value={hour.toString()} />
-                        ))}
-                    </Picker>
-                    <Picker
-                        style={CreateAccountStyles.timePicker}
-                        selectedValue={openingTimeMinute}
-                        onValueChange={(itemValue) => setOpeningTimeMinute(itemValue)}>
-                        {minutes.map(minute => (
-                            <Picker.Item key={minute} label={minute.toString()} value={minute.toString()} />
-                        ))}
-                    </Picker>
+                    <Text style = {{fontWeight: 'bold', fontSize: 15}}>Opening Time:</Text>
+                    <ModalDropdown
+                        options={hours}
+                        defaultValue="HH"
+                        onSelect={(index, value) => setOpeningTimeHour(value)}
+                        textStyle={CreateAccountStyles.pickerText}
+                        dropdownTextStyle={CreateAccountStyles.dropdownText}
+                        dropdownStyle={CreateAccountStyles.dropdown}
+                    />
+                    <ModalDropdown
+                        options={minutes}
+                        defaultValue="MM"
+                        onSelect={(index, value) => setOpeningTimeMinute(value)}
+                        textStyle={CreateAccountStyles.pickerText}
+                        dropdownTextStyle={CreateAccountStyles.dropdownText}
+                        dropdownStyle={CreateAccountStyles.dropdown}
+                    />
                 </View>
                 <View style={CreateAccountStyles.timePickerContainer}>
-                    <Text>Closing Time:</Text>
-                    <Picker
-                        style={CreateAccountStyles.timePicker}
-                        selectedValue={closingTimeHour}
-                        onValueChange={(itemValue) => setClosingTimeHour(itemValue)}>
-                        {hours.map(hour => (
-                            <Picker.Item key={hour} label={hour.toString()} value={hour.toString()} />
-                        ))}
-                    </Picker>
-                    <Picker
-                        style={CreateAccountStyles.timePicker}
-                        selectedValue={closingTimeMinute}
-                        onValueChange={(itemValue) => setClosingTimeMinute(itemValue)}>
-                        {minutes.map(minute => (
-                            <Picker.Item key={minute} label={minute.toString()} value={minute.toString()} />
-                        ))}
-                    </Picker>
+                    <Text style = {{fontWeight: 'bold', fontSize: 15}}>Closing Time:</Text>
+                    <ModalDropdown
+                        options={hours}
+                        defaultValue="HH"
+                        onSelect={(index, value) => setClosingTimeHour(value)}
+                        textStyle={CreateAccountStyles.pickerText}
+                        dropdownTextStyle={CreateAccountStyles.dropdownText}
+                        dropdownStyle={CreateAccountStyles.dropdown}
+                    />
+                    <ModalDropdown
+                        options={minutes}
+                        defaultValue="MM"
+                        onSelect={(index, value) => setClosingTimeMinute(value)}
+                        textStyle={CreateAccountStyles.pickerText}
+                        dropdownTextStyle={CreateAccountStyles.dropdownText}
+                        dropdownStyle={CreateAccountStyles.dropdown}
+                    />
                 </View>
                 <TextInput
                     placeholder="Email"
@@ -140,10 +141,10 @@ const CreateAccountStyles = StyleSheet.create({
     },
     subtitle: {
         fontSize: 16,
-        marginBottom: 30,
+        marginBottom: 50,
     },
     textInput: {
-        marginBottom: 20,
+        marginBottom: 25,
         backgroundColor: "#d3d3d3",
         borderRadius: 20,
         height: 40,
@@ -155,10 +156,19 @@ const CreateAccountStyles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
-    timePicker: {
-        height: 40,
+    pickerText: {
+        fontSize: 16,
+        color: 'black',
         width: 80,
-        marginLeft: 15,
+        textAlign: 'center',
+    },
+    dropdownText: {
+        fontSize: 16,
+        color: 'black',
+    },
+    dropdown: {
+        width: 100,
+        height: 200,
     },
     buttonContainer: {
         margin: 5,

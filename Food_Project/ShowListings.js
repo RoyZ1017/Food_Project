@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { Button, StyleSheet, Text, View, ScrollView, TouchableOpacity, Linking, Alert, FlatList } from 'react-native';
+import ModalDropdown from 'react-native-modal-dropdown';
 import { fireStore } from './Firebase.js'; 
 import { getDocs, collection, query, orderBy, doc, updateDoc, deleteDoc, addDoc } from "firebase/firestore";
 
@@ -10,8 +10,10 @@ const ShowListingsScreen = ({ route }) => {
     const [selectedDistrict, setSelectedDistrict] = useState('Any');
     const { email } = route.params;
 
+    const districts = ['Any', 'Etobicoke-York', 'North York', 'Toronto & East', 'Scarborough'];
+
     const fetchListings = async () => {
-        console.log("fetching Now")
+        console.log("fetching Now");
         try {
             const querySnapshot = await getDocs(
                 query(collection(fireStore, "listings"), orderBy("discountedPrice", "desc"))
@@ -118,50 +120,54 @@ const ShowListingsScreen = ({ route }) => {
             food item, the prices, the quantity available, and the location (which can be opened in Google Maps). Each listing can only be reserved once.</Text>
             <View style={styles.pickerContainer}>
                 <Text style={styles.pickerLabel}>Sort by Food Type:</Text>
-                <Picker
-                    selectedValue={selectedDistrict}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setSelectedDistrict(itemValue)}
-                >
-                    <Picker.Item label="Any" value="Any" />
-                    <Picker.Item label="Etobicoke-York" value="Etobicoke-York" />
-                    <Picker.Item label="North York" value="North York" />
-                    <Picker.Item label="Toronto & East" value="Toronto & East" />
-                    <Picker.Item label="Scarborough" value="Scarborough" />
-                </Picker>
+                <View style={styles.pickerWrapper}>
+                    <ModalDropdown
+                        options={districts}
+                        defaultValue={selectedDistrict}
+                        onSelect={(index, value) => setSelectedDistrict(value)}
+                        textStyle={styles.pickerText}
+                        dropdownTextStyle={styles.dropdownText}
+                        dropdownStyle={styles.dropdown}
+                    />
+                </View>
             </View>
             {filteredListings.length === 0 ? (
                 <Text style={styles.noListingsText}>
                     There are no listings of {selectedDistrict} available.
                 </Text>
             ) : (
-                filteredListings.map((listing, index) => (
-                    <View key={index} style={styles.listingItem}>
-                        <Text style={styles.listingTitle}>LISTING {index + 1}</Text>
-                        <Text style={styles.listItemText}>Rest. Name: {listing.restaurantName}</Text>
-                        <Text style={styles.listItemText}>Food Item: {listing.foodName}</Text>
-                        <Text style={styles.listItemText}>Description: {listing.description}</Text>
-                        <View style={{ marginBottom: 20 }} />
-                        <TouchableOpacity onPress={() => openMaps(listing.address)}>
-                            <Text style={styles.listItemText}>
-                                <Text>Address: </Text>
-                                <Text style={{ color: 'blue' }}>{listing.address}</Text>
-                            </Text>
-                        </TouchableOpacity>
-                        <Text style={styles.listItemText}>District: {listing.district}</Text>
-                        <View style={styles.priceContainer}>
-                            <Text style={styles.listItemText}>Original Price: {listing.originalPrice}  |  Discounted Price: {listing.discountedPrice}</Text>
+                <FlatList
+                    data={filteredListings}
+                    keyExtractor={(item) => item.id}
+                    initialScrollIndex={0}
+                    renderItem={({ item, index }) => (
+                        <View key={index} style={styles.listingItem}>
+                            <Text style={styles.listingTitle}>LISTING {index + 1}</Text>
+                            <Text style={styles.listItemText}>Rest. Name: {item.restaurantName}</Text>
+                            <Text style={styles.listItemText}>Food Item: {item.foodName}</Text>
+                            <Text style={styles.listItemText}>Description: {item.description}</Text>
+                            <View style={{ marginBottom: 20 }} />
+                            <TouchableOpacity onPress={() => openMaps(item.address)}>
+                                <Text style={styles.listItemText}>
+                                    <Text>Address: </Text>
+                                    <Text style={{ color: 'blue' }}>{item.address}</Text>
+                                </Text>
+                            </TouchableOpacity>
+                            <Text style={styles.listItemText}>District: {item.district}</Text>
+                            <View style={styles.priceContainer}>
+                                <Text style={styles.listItemText}>Original Price: {item.originalPrice}  |  Discounted Price: {item.discountedPrice}</Text>
+                            </View>
+                            <View style={styles.reserveContainer}>
+                                <Text style={styles.listItemText}>Quantity Available: {item.quantityAvailable}</Text>
+                                <Button
+                                    title="Reserve"
+                                    disabled={item.quantityAvailable <= 0}
+                                    onPress={() => reserveListing(item.id, item)}
+                                />
+                            </View>
                         </View>
-                        <View style={styles.reserveContainer}>
-                            <Text style={styles.listItemText}>Quantity Available: {listing.quantityAvailable}</Text>
-                            <Button
-                                title="Reserve"
-                                disabled={listing.quantityAvailable <= 0}
-                                onPress={() => reserveListing(listing.id, listing)}
-                            />
-                        </View>
-                    </View>
-                ))
+                    )}
+                />
             )}
             <Text style={styles.title}>My Orders</Text>
             <Text style={styles.subtitle}>Below is a list of your reserved orders. You can click the remove button if you wish to 
@@ -171,18 +177,22 @@ const ShowListingsScreen = ({ route }) => {
                 <Text style={styles.noOrdersText}>You have no orders.</Text>
             ) : (
                 myOrders.map((order, index) => (
-            <View key={index} style={styles.listingItem}>
-                <Text style={styles.listingTitle}>ORDER {index + 1}</Text>
-                <View style={styles.reserveContainer}>
-                    <Text style={styles.listItemText}>Food Item: {order.foodName}</Text>
-                    <Button
-                        title="Remove"
-                        color="red"
-                        onPress={() => removeOrder(order.id, order)}
-                    />
-                </View>
-            </View>
-    ))
+                    <View key={index} style={styles.listingItem}>
+                        <Text style={styles.listingTitle}>ORDER {index + 1}</Text>
+                        <View style={styles.reserveContainer}>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.listItemText}>Rest. Name: {order.restaurantName}</Text>
+                                <Text style={styles.listItemText}>Food Item: {order.foodName}</Text>
+                                <Text style={styles.listItemText}>Address: {order.address}</Text>
+                            </View>
+                            <Button
+                                title="Remove"
+                                color="red"
+                                onPress={() => removeOrder(order.id, order)}
+                            />
+                        </View>
+                    </View>
+                ))
             )}
         </ScrollView>
     );
@@ -212,58 +222,61 @@ const styles = StyleSheet.create({
         marginRight: 10,
         fontWeight: 'bold',
     },
-    picker: {
-        height: 30,
-        width: 200, 
-    },
-    listingItem: {
-        marginBottom: 50, 
-        backgroundColor: '#fffdfa', 
-        padding: 15,
-        borderRadius: 10,
-        borderWidth: 3,
-        borderColor: '#d0d0d0',
-    },
-    listingTitle: {
-        fontWeight: 'bold',
-        fontSize: 22, 
-        marginBottom: 20,
-        textAlign: 'center',
-    },
-    listItemText: {
-        fontSize: 16, 
-    },
-    priceContainer: {
-        marginTop: 20,
-    },
-    reserveContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    orderItem: {
-        marginBottom: 20,
-        backgroundColor: '#f9f9f9',
-        padding: 15,
-        borderRadius: 10,
+    pickerWrapper: {
+        flex: 1,
         borderWidth: 1,
-        borderColor: '#e0e0e0',
+        borderColor: '#ccc',
+        borderRadius: 5,
     },
-    buttonContainer: {
-        width: 120,
-        alignSelf: 'flex-start',
-        paddingTop: 10,
+    pickerText: {
+        fontSize: 16,
+        color: 'black',
+        marginVertical: 5,
+    },
+    dropdownText: {
+        fontSize: 16,
+        color: 'black',
+    },
+    dropdown: {
+        width: '80%',
     },
     noListingsText: {
         fontSize: 16,
+        fontStyle: 'italic',
         textAlign: 'center',
-        marginTop: 20,
+        marginBottom: 40, marginTop: 10,
+    },
+    listingItem: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 15,
+        marginBottom: 20,
+    },
+    listingTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    listItemText: {
+        fontSize: 16,
+    },
+    priceContainer: {
+        marginVertical: 10,
+    },
+    reserveContainer: {
+        marginVertical: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    textContainer: {
+        flex: 1,
     },
     noOrdersText: {
         fontSize: 16,
+        fontStyle: 'italic',
         textAlign: 'center',
-        marginTop: 20,
     },
 });
 

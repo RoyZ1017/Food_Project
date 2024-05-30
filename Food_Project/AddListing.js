@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { fireStore } from './Firebase.js'; 
 import { addDoc, collection, getDocs, query, orderBy } from "firebase/firestore";
-import { Picker } from '@react-native-picker/picker';
+import ModalDropdown from 'react-native-modal-dropdown';
 
 const AddListingScreen = ({ route }) => {
     const [restaurantName, setRestaurantName] = useState('');
@@ -111,15 +111,14 @@ const AddListingScreen = ({ route }) => {
                     onChangeText={setAddress}
                 />
                 <View style={ListingStyles.pickerContainer}>
-                    <Picker selectedValue={district}
-                        onValueChange={(itemValue) => setDistrict(itemValue)}
-                        style={ListingStyles.picker}>
-                        <Picker.Item label="District" value="" />
-                        <Picker.Item label="Etobicoke-York" value="Etobicoke-York" />
-                        <Picker.Item label="North York" value="North York" />
-                        <Picker.Item label="Toronto & East" value="Toronto & East" />
-                        <Picker.Item label="Scarborough" value="Scarborough" />
-                    </Picker>
+                    <ModalDropdown
+                        options={['Etobicoke-York', 'North York', 'Toronto & East', 'Scarborough']}
+                        defaultValue="Select District"
+                        onSelect={(index, value) => setDistrict(value)}
+                        textStyle={ListingStyles.pickerText}
+                        dropdownTextStyle={ListingStyles.dropdownText}
+                        dropdownStyle={ListingStyles.dropdown}
+                    />
                 </View>
                 <TextInput
                     placeholder="Original Price"
@@ -213,18 +212,32 @@ const ListingStyles = StyleSheet.create({
     numericInput: {
         marginBottom: 10,
     },
-    pickerContainer: {
-        marginBottom: 10, marginTop: 10,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 10,
-        borderColor: '#ddd',
+    pickerText: {
+        fontSize: 16,
+        color: 'black',
         width: '70%',
-        paddingHorizontal: 10,
+        textAlign: 'center',
+        padding: 10,
+        borderWidth: 2,
+        borderColor: '#ddd',
+        borderRadius: 5,
+        backgroundColor: '#f9f9f9',
+        alignSelf: 'center',
+        marginBottom: 10,
+    },
+    dropdownText: {
+        fontSize: 16,
+        color: 'black',
+    },
+    dropdown: {
+        width: '70%',
+        height: 150,
         alignSelf: 'center',
     },
-    picker: {
-        height: 40,
-        width: '100%',
+    pickerContainer: {
+        marginBottom: 10, 
+        marginTop: 10,
+        alignItems: 'center',
     },
     buttonContainer: {
         marginTop: 15, marginBottom: 25,
@@ -253,4 +266,3 @@ const ListingStyles = StyleSheet.create({
 });
 
 export default AddListingScreen;
-
