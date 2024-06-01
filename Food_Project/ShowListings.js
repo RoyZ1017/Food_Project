@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View, ScrollView, TouchableOpacity, Linking, Alert, FlatList } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableOpacity, Linking, Alert, FlatList } from 'react-native';
 import ModalDropdown from 'react-native-modal-dropdown';
 import { fireStore } from './Firebase.js'; 
 import { getDocs, collection, query, orderBy, doc, updateDoc, deleteDoc, addDoc } from "firebase/firestore";
+import { ScrollView } from 'react-native-virtualized-view'
+
 
 /**
  * ShowListingsScreen Component
@@ -203,6 +205,7 @@ const ShowListingsScreen = ({ route }) => {
                         </View>
                     )}
                 />
+
             )}
             <Text style={styles.title}>My Orders</Text>
             <Text style={styles.subtitle}>Below is a list of your reserved orders. You can click the remove button if you wish to 
